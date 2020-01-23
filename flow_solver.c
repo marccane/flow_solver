@@ -26,7 +26,7 @@ enum {
   MAX_COLORS = 16,
   
   // Maximum valid size of a puzzle
-  MAX_SIZE = 15,
+  MAX_SIZE = 16,
   
   // Maximum # cells in a valid puzzle -- since we just use bit
   // shifting to do x/y, need to allocate space for 1 unused column.
@@ -1230,7 +1230,7 @@ int color_features_compare(const color_features_t* a, const color_features_t* b)
 }
 
 //////////////////////////////////////////////////////////////////////
-//Totally legit and modular code (https://www.edureka.co/blog/merge-sort-in-c/)
+//Totally legit and modular code (modified from https://www.edureka.co/blog/merge-sort-in-c/)
 void merge(color_features_t arr[], int l, int m, int r)
 {
     int i, j, k;
@@ -2902,7 +2902,7 @@ int main(int argc, char** argv) {
   g_options.search_outside_in = 1;
   g_options.search_best_first = 1;
   g_options.search_max_nodes = 0;
-  g_options.search_max_mb = 128;
+  g_options.search_max_mb = 16384;
   g_options.search_fast_forward = 1;
 
   const char* input_files[argc];

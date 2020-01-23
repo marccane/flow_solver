@@ -1211,10 +1211,10 @@ int cmp(int a, int b) {
 //////////////////////////////////////////////////////////////////////
 // For sorting colors
 
-int color_features_compare(const void* vptr_a, const void* vptr_b) {
+int color_features_compare(const color_features_t* a, const color_features_t* b) {
 
-  const color_features_t* a = (const color_features_t*)vptr_a;
-  const color_features_t* b = (const color_features_t*)vptr_b;
+  //const color_features_t* a = (const color_features_t*)vptr_a;
+  //const color_features_t* b = (const color_features_t*)vptr_b;
 
   int u = cmp(a->user_index, b->user_index);
   if (u) { return u; }
@@ -1227,6 +1227,62 @@ int color_features_compare(const void* vptr_a, const void* vptr_b) {
 
   return -cmp(a->min_dist, b->min_dist);
 
+}
+
+//////////////////////////////////////////////////////////////////////
+//Totally legit and modular code (https://www.edureka.co/blog/merge-sort-in-c/)
+void merge(color_features_t arr[], int l, int m, int r)
+{
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 = r - m;
+    color_features_t L[n1], R[n2];
+
+    for (i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = arr[m + 1+ j];
+
+    i = 0;
+    j = 0;
+    k = l;
+    while (i < n1 && j < n2) {
+        if (color_features_compare(&L[i],&R[j]) <= 0) {
+            arr[k] = L[i];
+            i++;
+        }
+        else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+void i_mergeSort(color_features_t arr[], int l, int r)
+{
+    if (l < r) {
+        int m = l+(r-l)/2;
+        i_mergeSort(arr, l, m);
+        i_mergeSort(arr, m+1, r);
+        merge(arr, l, m, r);
+    }
+}
+
+void mergesort(color_features_t arr[], size_t nelems){
+    i_mergeSort(arr,0,nelems-1);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1297,8 +1353,8 @@ void game_order_colors(game_info_t* info,
 
     }
 
-    mergesort(cf, info->num_colors, sizeof(color_features_t),
-              color_features_compare);
+    mergesort(cf, info->num_colors/*, sizeof(color_features_t),
+              color_features_compare*/);
 
     for (size_t i=0; i<info->num_colors; ++i) {
       info->color_order[i] = cf[i].index;
@@ -1722,8 +1778,6 @@ int game_find_forced(const game_info_t* info,
 
     if (state->completed & (1 << color)) { continue; }
 
-
-      int free_dir = -1;
       int num_free = 0;
 
       for (int dir=0; dir<4; ++dir) {
@@ -1733,7 +1787,6 @@ int game_find_forced(const game_info_t* info,
 
         if (state->cells[neighbor_pos] == 0) {
 
-          free_dir = dir;
           ++num_free;
 
           if (game_is_forced(info, state, color, neighbor_pos)) {

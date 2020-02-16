@@ -15,6 +15,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
+#define FLOOR_FIX
 
 // Positions are 8-bit integers with 4 bits each for y, x.
 enum {
@@ -2408,6 +2409,23 @@ tree_node_t* game_validate_ff(const game_info_t* info,
   return 0;
   
 }
+
+#ifdef FLOOR_FIX
+//Function by chqlie from SO
+//https://stackoverflow.com/questions/41856771/write-your-own-implementation-of-maths-floor-function-c
+double floor(double num) {
+    /*if (num >= LLONG_MAX || num <= LLONG_MIN || num != num) { //include limits.h for these constants
+        // handle large values, infinities and nan
+        return num;
+    }*/
+    long long n = (long long)num;
+    double d = (double)n;
+    if (d == num || num >= 0)
+        return d;
+    else
+        return d - 1;
+}
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // Peforms A* or BFS search
